@@ -16,6 +16,7 @@ class PlayerViewController: UIViewController {
     var currentIndex: Int!
     var player: AVPlayer!
     var trackImageView: UIImageView!
+    var isPlaying: Bool =  false;
     
     var playPauseButton: UIButton!
     var nextButton: UIButton!
@@ -130,7 +131,20 @@ class PlayerViewController: UIViewController {
         let track = tracks[currentIndex]
         let url = NSURL(string: "https://api.soundcloud.com/tracks/\(track.id)/stream?client_id=\(clientID)")!
         // FILL ME IN
-    
+        if(player.currentItem == nil){
+            player.replaceCurrentItemWithPlayerItem(AVPlayerItem(URL: url))
+        }
+        if(isPlaying){
+            player.pause()
+            isPlaying = false
+            sender.selected = false
+        }
+        else{
+            player.play()
+            isPlaying = true
+            sender.selected = true
+        }
+        
     }
     
     /* 
@@ -140,7 +154,23 @@ class PlayerViewController: UIViewController {
      * Remember to update the currentIndex
      */
     func nextTrackTapped(sender: UIButton) {
-    
+        if (tracks.count > currentIndex + 1){
+            currentIndex = currentIndex + 1
+            let newTrack = tracks[currentIndex]
+            asyncLoadTrackImage(newTrack)
+            artistLabel.text = newTrack.artist
+            titleLabel.text = newTrack.title
+            player = AVPlayer(URL: newTrack.getURL())
+            if(isPlaying){
+                player.play()
+            }
+            else{
+                player.pause()
+                sender.selected = false
+                isPlaying = false
+
+            }
+        }
     }
 
     /*
@@ -154,7 +184,27 @@ class PlayerViewController: UIViewController {
      */
 
     func previousTrackTapped(sender: UIButton) {
-    
+        let time = player.currentTime()
+        if time.seconds < 3{
+            currentIndex = currentIndex - 1
+            let newTrack = tracks[currentIndex]
+            asyncLoadTrackImage(newTrack)
+            artistLabel.text = newTrack.artist
+            titleLabel.text = newTrack.title
+            player = AVPlayer(URL: newTrack.getURL())
+        }
+        else{
+            player.seekToTime(CMTimeMake(0,1))
+        }
+        if(isPlaying){
+            player.play()
+        }
+        else{
+            player.pause()
+            sender.selected = false
+            isPlaying = false
+        }
+
     }
     
     

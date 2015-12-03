@@ -22,8 +22,14 @@ class Track {
         
         var originalSize: String!
         var largerSize: String!
-        
-        artworkURL = data.objectForKey("artwork_url") as! String
+        artworkURL = "http://www.makeitinmusic.com/wp-content/uploads/2012/06/do-you-need-a-license.jpg"
+        if(data.objectForKey("artwork_url") is NSNull){
+            artworkURL = "http://www.makeitinmusic.com/wp-content/uploads/2012/06/do-you-need-a-license.jpg"
+        }
+        else{
+            artworkURL = data.objectForKey("artwork_url") as! String
+
+        }
         if artworkURL.characters.last! == "0" {
             originalSize = "80&height=80"
             largerSize = "500&height=500"
